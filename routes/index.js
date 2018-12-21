@@ -38,7 +38,10 @@ function checkUpdate() {
                 username || first_name,
                 chatMessage.message.text.substring("/pedir".length).trim()
               );
-              client.sendMessage(chatMessage.message.chat.id, response.mensaje);
+              client.sendMessage(
+                chatMessage.message.chat.id,
+                applyEasterEgg(first_name, username, response.mensaje)
+              );
             } else if (chatMessage.message.text.startsWith("/pedido")) {
               client.sendMessage(chatMessage.message.chat.id, pedido().mensaje);
             } else if (chatMessage.message.text.startsWith("/sugerencia")) {
@@ -50,6 +53,11 @@ function checkUpdate() {
               client.sendMessage(
                 chatMessage.message.chat.id,
                 mostrarMenu().mensaje
+              );
+            } else if (chatMessage.message.text.startsWith("/qr")) {
+              client.sendPhoto(
+                chatMessage.message.chat.id,
+                "AgADAQADbqgxG--wKERNgktIZMI8NP-3CjAABIToFvdIT3dNfVMCAAEC"
               );
             }
           });
@@ -64,6 +72,18 @@ function checkUpdate() {
         console.log(err);
       }
     );
+}
+
+function applyEasterEgg(first_name, username, original) {
+  if (first_name === "Yamil") {
+    return "\ud83d\udc08 Meowww!";
+  }
+
+  if (first_name === "A4") {
+    return "\ud83d\udcaa Listo!";
+  }
+
+  return original;
 }
 
 function mostrarMenu() {
