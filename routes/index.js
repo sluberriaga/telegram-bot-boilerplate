@@ -28,37 +28,49 @@ function checkUpdate() {
 
         if (response.result.length > 0) {
           response.result.forEach(chatMessage => {
-            if (chatMessage.message.text.startsWith("/abrir")) {
-              client.sendMessage(chatMessage.message.chat.id, abrir().mensaje);
-            } else if (chatMessage.message.text.startsWith("/cerrar")) {
-              client.sendMessage(chatMessage.message.chat.id, cerrar().mensaje);
-            } else if (chatMessage.message.text.startsWith("/pedir")) {
-              const { username, first_name } = chatMessage.message.from;
-              const response = pedir(
-                username || first_name,
-                chatMessage.message.text.substring("/pedir".length).trim()
-              );
-              client.sendMessage(
-                chatMessage.message.chat.id,
-                applyEasterEgg(first_name, username, response.mensaje)
-              );
-            } else if (chatMessage.message.text.startsWith("/pedido")) {
-              client.sendMessage(chatMessage.message.chat.id, pedido().mensaje);
-            } else if (chatMessage.message.text.startsWith("/sugerencia")) {
-              client.sendMessage(
-                chatMessage.message.chat.id,
-                sugerencia().mensaje
-              );
-            } else if (chatMessage.message.text.startsWith("/menu")) {
-              client.sendMessage(
-                chatMessage.message.chat.id,
-                mostrarMenu().mensaje
-              );
-            } else if (chatMessage.message.text.startsWith("/qr")) {
-              client.sendPhoto(
-                chatMessage.message.chat.id,
-                "AgADAQADbqgxG--wKERNgktIZMI8NP-3CjAABIToFvdIT3dNfVMCAAEC"
-              );
+            if (chatMessage.message.text) {
+              if (chatMessage.message.text.startsWith("/abrir")) {
+                client.sendMessage(
+                  chatMessage.message.chat.id,
+                  abrir().mensaje
+                );
+              } else if (chatMessage.message.text.startsWith("/cerrar")) {
+                client.sendMessage(
+                  chatMessage.message.chat.id,
+                  cerrar().mensaje
+                );
+              } else if (chatMessage.message.text.startsWith("/pedir")) {
+                const { id, username, first_name } = chatMessage.message.from;
+                const response = pedir(
+                  username || first_name,
+                  chatMessage.message.text.substring("/pedir".length).trim()
+                );
+                client.sendMessage(
+                  chatMessage.message.chat.id,
+                  applyEasterEgg(id, first_name, username, response.mensaje),
+                  { parse_mode: "Markdown" }
+                );
+              } else if (chatMessage.message.text.startsWith("/pedido")) {
+                client.sendMessage(
+                  chatMessage.message.chat.id,
+                  pedido().mensaje
+                );
+              } else if (chatMessage.message.text.startsWith("/sugerencia")) {
+                client.sendMessage(
+                  chatMessage.message.chat.id,
+                  sugerencia().mensaje
+                );
+              } else if (chatMessage.message.text.startsWith("/menu")) {
+                client.sendMessage(
+                  chatMessage.message.chat.id,
+                  mostrarMenu().mensaje
+                );
+              } else if (chatMessage.message.text.startsWith("/qr")) {
+                client.sendPhoto(
+                  chatMessage.message.chat.id,
+                  "AgADAQADbqgxG--wKERNgktIZMI8NP-3CjAABIToFvdIT3dNfVMCAAEC"
+                );
+              }
             }
           });
 
@@ -74,7 +86,40 @@ function checkUpdate() {
     );
 }
 
-function applyEasterEgg(first_name, username, original) {
+function applyEasterEgg(id, first_name, username, original) {
+  if (id === 35556320) {
+    return `Pidiendo...
+	\`\`\`                                      .
+                             /^\\     .
+                        /\\   "V"
+                       /__\\   I      O  o
+                      //..\\\\  I     .
+                      \\].\`[/  I
+                      /l\\/j\\  (]    .  O
+                     /. ~~ ,\\/I          .
+                     \\\\L__j^\\/I       o
+                      \\/--v}  I     o   .
+                      |    |  I   _________
+                      |    |  I c(\`       ')o
+                      |    l  I   \\.     ,/     
+                    _/j  L l\\_!  _//^---^\\\\_
+				 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	\`\`\`
+			...the Magic is in the air!`;
+  }
+
+  if (username === "pupukaru") {
+    return original;
+  }
+
+  if (username === "slucero") {
+    return "10:4 Roger 👮‍♀! ";
+  }
+
+  if (username === "ignaciorojas") {
+    return "Permiso denegado. Los actores no comen eso.";
+  }
+
   if (first_name === "Yamil") {
     return "\ud83d\udc08 Meowww!";
   }
