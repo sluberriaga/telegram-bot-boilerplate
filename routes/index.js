@@ -70,6 +70,11 @@ function checkUpdate() {
                   chatMessage.message.chat.id,
                   "AgADAQADbqgxG--wKERNgktIZMI8NP-3CjAABIToFvdIT3dNfVMCAAEC"
                 );
+              } else if (chatMessage.message.text.startsWith("/telefono")) {
+                client.sendMessage(
+                  chatMessage.message.chat.id,
+                  telefono().mensaje
+                );
               }
             }
           });
@@ -162,6 +167,11 @@ function sugerencia() {
     return { result: true, mensaje: `${mensaje} con salsa ${salsa}` };
   }
 
+  return { result: true, mensaje };
+}
+
+function telefono() {
+  const mensaje = "47912900";
   return { result: true, mensaje };
 }
 
