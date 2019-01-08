@@ -1,5 +1,4 @@
-# telegram-bot-boilerplate
-> example application showing how to set up a [Telegram](https://telegram.org/) chatbot using the [telegram-bot-client](https://github.com/m90/telegram-bot-client) library and [express.js](https://github.com/expressjs/express)
+# MorfiBot
 
 [![Build Status](https://travis-ci.org/m90/telegram-bot-boilerplate.svg?branch=master)](https://travis-ci.org/m90/telegram-bot-boilerplate)
 
