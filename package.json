@@ -17,5 +17,8 @@
     "mocha": "^2.5.3",
     "sinon": "^1.17.4",
     "supertest": "^1.2.0"
+  },
+  "prettier": {
+    "printWidth": 120
   }
 }

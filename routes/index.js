@@ -1,13 +1,61 @@
 var express = require("express");
 var store = require("./store");
 var client = require("./../client");
+var applyEasterEgg = require("./easterEgg");
 var menu = require("./menu");
 
 var router = express.Router();
+var warningCallbackTimeout = null;
+var closingCallbackTimeout = null;
+var DURACION_MINUTO = 60;
+var CHAT_PARAISO_NATURAL_ID = -1001437672733;
 
-router.get("/", (req, res) => {
-  res.json({ ok: true });
+router.post("/check", (req, res) => {
+  handleMessage(req.body);
+  res.send({
+    ok: true
+  });
 });
+
+function handleMessage(request) {
+  if (request.result.length > 0) {
+    request.result.forEach(chatMessage => {
+      if (chatMessage.message.text) {
+        const texto = chatMessage.message.text;
+        const command = chatMessage.message.text.toLowerCase();
+
+        if (command.startsWith("/abrir")) {
+          client.sendMessage(chatMessage.message.chat.id, abrir(chatMessage, command, client).mensaje);
+        } else if (command.startsWith("/cerrar")) {
+          client.sendMessage(chatMessage.message.chat.id, cerrar(chatMessage, command).mensaje);
+        } else if (command.startsWith("/pedir")) {
+          client.sendMessage(
+            chatMessage.message.chat.id,
+            applyEasterEgg(chatMessage, pedir(chatMessage, command).mensaje),
+            { parse_mode: "Markdown" }
+          );
+        } else if (command.startsWith("/pedido")) {
+          client.sendMessage(chatMessage.message.chat.id, pedido(chatMessage, command).mensaje);
+        } else if (command.startsWith("/ventrilocuar")) {
+          client.sendMessage(CHAT_PARAISO_NATURAL_ID, texto.substring("/ventrilocuar".length).trim());
+        } else if (command.startsWith("/telefono")) {
+          client.sendMessage(chatMessage.message.chat.id, telefono(chatMessage, command).mensaje);
+        } else if (command.startsWith("/sugerenciavegetariana")) {
+          client.sendMessage(chatMessage.message.chat.id, sugerenciaVegetariana(chatMessage, command).mensaje);
+        } else if (command.startsWith("/sugerencia")) {
+          client.sendMessage(chatMessage.message.chat.id, sugerencia(chatMessage, command).mensaje);
+        } else if (command.startsWith("/menu")) {
+          client.sendMessage(chatMessage.message.chat.id, mostrarMenu(chatMessage, command).mensaje);
+        } else if (command.startsWith("/qr")) {
+          client.sendPhoto(chatMessage.message.chat.id, "AgADAQADbqgxG--wKERNgktIZMI8NP-3CjAABIToFvdIT3dNfVMCAAEC");
+        }
+      }
+    });
+
+    lastUpdateID = response.result[response.result.length - 1].update_id;
+    store.save("lastUpdateID", lastUpdateID);
+  }
+}
 
 checkUpdate();
 
@@ -25,47 +73,35 @@ function checkUpdate() {
     .then(
       function(response) {
         console.log(JSON.stringify(response));
-
         if (response.result.length > 0) {
           response.result.forEach(chatMessage => {
             if (chatMessage.message.text) {
-              if (chatMessage.message.text.startsWith("/abrir")) {
+              const texto = chatMessage.message.text;
+              const command = chatMessage.message.text.toLowerCase();
+
+              if (command.startsWith("/abrir")) {
+                client.sendMessage(chatMessage.message.chat.id, abrir(chatMessage, command, client).mensaje);
+              } else if (command.startsWith("/cerrar")) {
+                client.sendMessage(chatMessage.message.chat.id, cerrar(chatMessage, command).mensaje);
+              } else if (command.startsWith("/pedir")) {
                 client.sendMessage(
                   chatMessage.message.chat.id,
-                  abrir().mensaje
-                );
-              } else if (chatMessage.message.text.startsWith("/cerrar")) {
-                client.sendMessage(
-                  chatMessage.message.chat.id,
-                  cerrar().mensaje
-                );
-              } else if (chatMessage.message.text.startsWith("/pedir")) {
-                const { id, username, first_name } = chatMessage.message.from;
-                const response = pedir(
-                  username || first_name,
-                  chatMessage.message.text.substring("/pedir".length).trim()
-                );
-                client.sendMessage(
-                  chatMessage.message.chat.id,
-                  applyEasterEgg(id, first_name, username, response.mensaje),
+                  applyEasterEgg(chatMessage, pedir(chatMessage, command).mensaje),
                   { parse_mode: "Markdown" }
                 );
-              } else if (chatMessage.message.text.startsWith("/pedido")) {
-                client.sendMessage(
-                  chatMessage.message.chat.id,
-                  pedido().mensaje
-                );
-              } else if (chatMessage.message.text.startsWith("/sugerencia")) {
-                client.sendMessage(
-                  chatMessage.message.chat.id,
-                  sugerencia().mensaje
-                );
-              } else if (chatMessage.message.text.startsWith("/menu")) {
-                client.sendMessage(
-                  chatMessage.message.chat.id,
-                  mostrarMenu().mensaje
-                );
-              } else if (chatMessage.message.text.startsWith("/qr")) {
+              } else if (command.startsWith("/pedido")) {
+                client.sendMessage(chatMessage.message.chat.id, pedido(chatMessage, command).mensaje);
+              } else if (command.startsWith("/ventrilocuar")) {
+                client.sendMessage(CHAT_PARAISO_NATURAL_ID, texto.substring("/ventrilocuar".length).trim());
+              } else if (command.startsWith("/telefono")) {
+                client.sendMessage(chatMessage.message.chat.id, telefono(chatMessage, command).mensaje);
+              } else if (command.startsWith("/sugerenciavegetariana")) {
+                client.sendMessage(chatMessage.message.chat.id, sugerenciaVegetariana(chatMessage, command).mensaje);
+              } else if (command.startsWith("/sugerencia")) {
+                client.sendMessage(chatMessage.message.chat.id, sugerencia(chatMessage, command).mensaje);
+              } else if (command.startsWith("/menu")) {
+                client.sendMessage(chatMessage.message.chat.id, mostrarMenu(chatMessage, command).mensaje);
+              } else if (command.startsWith("/qr")) {
                 client.sendPhoto(
                   chatMessage.message.chat.id,
                   "AgADAQADbqgxG--wKERNgktIZMI8NP-3CjAABIToFvdIT3dNfVMCAAEC"
@@ -77,81 +113,30 @@ function checkUpdate() {
           lastUpdateID = response.result[response.result.length - 1].update_id;
           store.save("lastUpdateID", lastUpdateID);
         }
-
         setTimeout(checkUpdate, 500);
       },
       function(err) {
         console.log(err);
+        setTimeout(checkUpdate, 500);
       }
     );
 }
 
-function applyEasterEgg(id, first_name, username, original) {
-  if (id === 35556320) {
-    return `Pidiendo...
-	\`\`\`                                      .
-                             /^\\     .
-                        /\\   "V"
-                       /__\\   I      O  o
-                      //..\\\\  I     .
-                      \\].\`[/  I
-                      /l\\/j\\  (]    .  O
-                     /. ~~ ,\\/I          .
-                     \\\\L__j^\\/I       o
-                      \\/--v}  I     o   .
-                      |    |  I   _________
-                      |    |  I c(\`       ')o
-                      |    l  I   \\.     ,/     
-                    _/j  L l\\_!  _//^---^\\\\_
-				 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	\`\`\`
-			...the Magic is in the air!`;
-  }
-
-  if (username === "pupukaru") {
-    return original;
-  }
-
-  if (username === "slucero") {
-    return "10:4 Roger 👮‍♀! ";
-  }
-
-  if (username === "ignaciorojas") {
-    return "Permiso denegado. Los actores no comen eso.";
-  }
-
-  if (first_name === "Yamil") {
-    return "\ud83d\udc08 Meowww!";
-  }
-
-  if (first_name === "A4") {
-    return "\ud83d\udcaa Listo!";
-  }
-
-  return original;
-}
-
-function mostrarMenu() {
+function mostrarMenu(chatMessage, command) {
   const mensaje = Object.keys(menu)
     .map(formatCategoria)
     .join("");
 
   function formatCategoria(categoria) {
-    return `${capitalize(categoria)}\n  - Platos\n${menu[categoria].platos
-      .map(plato => `    - ${plato}\n`)
-      .join("")}${
-      categoria === "pastas"
-        ? `  - Salsas\n${menu[categoria].salsas
-            .map(salsa => `    - ${salsa}\n`)
-            .join("")}`
-        : ""
+    return `${capitalize(categoria)}\n  - Platos\n${menu[categoria].platos.map(plato => `    - ${plato}\n`).join("")}${
+      categoria === "pastas" ? `  - Salsas\n${menu[categoria].salsas.map(salsa => `    - ${salsa}\n`).join("")}` : ""
     }`;
   }
 
   return { result: true, mensaje };
 }
 
-function sugerencia() {
+function sugerencia(chatMessage, command) {
   const categoria = getRandomProperty(menu);
   const plato = shuffle(categoria.platos)[0];
   const mensaje = `Mi sugerencia es:\n  - ${plato}`;
@@ -165,7 +150,14 @@ function sugerencia() {
   return { result: true, mensaje };
 }
 
-function pedido() {
+function sugerenciaVegetariana(chatMessage, command) {
+  const plato = shuffle(menu.ensaladas.platos)[0];
+  const mensaje = `Mi sugerencia es:\n  - ${plato}`;
+
+  return { result: true, mensaje };
+}
+
+function pedido(chatMessage, command) {
   let pedidoActual = store.read("pedidoActual");
 
   if (!pedidoActual) {
@@ -183,11 +175,28 @@ function pedido() {
   };
 }
 
-function abrir() {
-  let pedidoActual = store.read("pedidoActual");
-
-  if (pedidoActual) {
+function abrir(chatMessage, command, client) {
+  if (store.read("pedidoActual")) {
     return { resultado: false, mensaje: "Ya existe un pedido abierto!" };
+  }
+
+  const minutosHastaCierre = parseInt(command.substring("/abrir".length).trim(), 10);
+  if (Number.isNaN(minutosHastaCierre)) {
+    return {
+      resultado: false,
+      mensaje:
+        "No puedo parsear ese mensaje como un entero!\nPor favor, especificá la cantidad de minutos hasta cerrar el pedido, eg. /abrir 60"
+    };
+  } else {
+    closingCallbackTimeout = setTimeout(() => {
+      client.sendMessage(chatMessage.message.chat.id, cerrar(chatMessage, "/cerrar").mensaje);
+    }, minutosHastaCierre * DURACION_MINUTO * 1000);
+    if (minutosHastaCierre > 10) {
+      warningCallbackTimeout = setTimeout(
+        () => client.sendMessage(chatMessage.message.chat.id, "El pedido cierra en 10 minutos!"),
+        (minutosHastaCierre - 10) * DURACION_MINUTO * 1000
+      );
+    }
   }
 
   store.save("pedidoActual", {
@@ -196,10 +205,13 @@ function abrir() {
     estado: "abierto"
   });
 
-  return { resultado: true, mensaje: "Listo, ya podes realizar tu pedido!" };
+  return {
+    resultado: true,
+    mensaje: `Listo, ya podes realizar tu pedido!\nEn ${minutosHastaCierre} cierro el pedido!`
+  };
 }
 
-function cerrar() {
+function cerrar(chatMessage, command) {
   let pedidoActual = store.read("pedidoActual");
   let cant_responsables = 1;
   let mensaje = "Se cerro el pedido pero estaba vacío!";
@@ -208,22 +220,21 @@ function cerrar() {
     return { resultado: false, mensaje: "No existe un pedido abierto!" };
   }
 
+  clearTimeout(closingCallbackTimeout);
+  clearTimeout(warningCallbackTimeout);
+
   store.save("pedidoActual", {
     ...pedidoActual,
     estado: "cerrado"
   });
 
-  const responsables = shuffle(
-    Array.from(pedidoActual.pedidos.map(pedido => pedido.de))
-  );
+  const responsables = shuffle(Array.from(pedidoActual.pedidos.map(pedido => pedido.de)));
 
   if (responsables.length >= 4) {
     cant_responsables = responsables.length / 4;
   }
 
-  let deliverys = responsables
-    .filter((r, i) => i > 0 && i <= cant_responsables)
-    .join("\n - ");
+  let deliverys = responsables.filter((r, i) => i > 0 && i <= cant_responsables).join("\n - ");
 
   if (deliverys.length == 0) {
     deliverys = responsables[0];
@@ -234,10 +245,11 @@ function cerrar() {
       `El pedido se cerró!\n` +
       `Pedidos:\n` +
       pedidoActual.pedidos
-        .sort((a, b) => (a.pedido > b.pedido ? 1 : -1))
+        .sort((a, b) => (a.pedido.toLowerCase() > b.pedido.toLowerCase() ? 1 : -1))
         .map(pedido => `${pedido.de} - ${pedido.pedido}\n`)
         .join("") +
       `El responsable de llamar es:\n - ${responsables[0]}\n` +
+      `El teléfono es 4791-2900\n` +
       `Los responsables de ir a buscar el pedido son: \n - ${deliverys}\n`;
   }
 
@@ -246,8 +258,12 @@ function cerrar() {
   return { resultado: true, mensaje };
 }
 
-function pedir(persona, pedido) {
-  let pedidoActual = store.read("pedidoActual");
+function pedir(chatMessage, command) {
+  const { id, username, first_name } = chatMessage.message.from;
+
+  const persona = username || first_name;
+  const pedido = command.substring("/pedir".length).trim();
+  const pedidoActual = store.read("pedidoActual");
 
   if (!pedidoActual) {
     return { resultado: false, mensaje: "No existe un pedido abierto!" };
@@ -260,7 +276,16 @@ function pedir(persona, pedido) {
     pedidos: [...pedidosASalvar, { de: persona, pedido }]
   });
 
-  return { resultado: true, mensaje: "Registrado!" };
+  // A ver si leila puede ventrilocuar
+  if (Math.random() > 0.5) {
+    return { resultado: true, mensaje: "Registrado..." };
+  } else {
+    return { resultado: true, mensaje: "Registrado!" };
+  }
+}
+
+function telefono(chatMessage, command) {
+  return { result: true, mensaje: "El teléfono es 4791-2900\n" };
 }
 
 function shuffle(array) {

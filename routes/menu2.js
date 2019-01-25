@@ -1,0 +1,58 @@
+const menu = {
+  platos: [
+    {
+      nombre: "Ñoquis",
+      etiquetas: ["vegetariano", "invierno"],
+      categoria: "pastas",
+      sugerenciaModifier: (fecha, persona) => 0.1
+    }
+  ],
+  salsas: [
+    {
+      nombre: "Fileto",
+      etiquetas: ["vegetariano"],
+      sugerenciaModifier: (fecha, persona) => 0.1
+    }
+  ]
+};
+
+// "pastas": {
+//     "platos": ["Ñoquis", "Ravioles", "Tallarines", "Canelones"],
+//     "salsas": ["Fileto", "Bolognesa", "Blanca", "Crema", "Mixta", "Popeye"]
+//   },
+//   "ensaladas": {
+//     "platos": [
+//       "Costa Brava (Tomate, Rúcula, Atún, Aceitunas, Huevo)",
+//       "Nicoise (Arroz, Tomate, Atún, Aceitunas, Huevo)",
+//       "Babilonia (Tomate, Rúcula, Blanco de Ave, Mozzarella)",
+//       "Multicolor (Tomate, Papa, Chaucha, Zanahoria, Remolacha, Huevo)",
+//       "Delicia (Tomate, Zanahoria, Choclo, Mozzarella, Albahaca)",
+//       "Capresse (Tomate, Mozzarella, Albahaca, Oliva, Pimienta en grano)",
+//       "A elección (Lechuga, Rúcula, Papa, Chaucha, Remolacha, Apio, Manzana, Zanahoria, Huevo, Tomate, Radicheta, Arveja)"
+//     ]
+//   },
+//   "frescos": {
+//     "platos": ["Salpicón de ave", "Arrollado de ave con ensalada rusa", "Matambre de ternera con ensalada rusa"]
+//   },
+//   "pescados": {
+//     "platos": [
+//       "Brótola grillé con salsa tártara y vegetales",
+//       "Corvina al horno con papas panaderas",
+//       "Filet de merluza grillé o a la romana con guarnición"
+//     ]
+//   },
+//   "artesanales": {
+//     "platos": [
+//       "Milhojas de berenjena (Berenjenas, Queso, Zuchini, Tomate)",
+//       "Mozzarella in carroza (Tomate, Albahaca)",
+//       "Milanesa de pollo fiorentina (Verdura a la crema, Queso port salut)",
+//       "1/4 de pollo a la crema de queso con papas fritas",
+//       "Soufle vegetariano con crema de choclo y zanahoria",
+//       "1/2 bife de chorizon con guarnición",
+//       "Milanesa de pollo con guarnición",
+//       "Milanesa de ternera con guarnición",
+//       "1/4 de pollo grillé con guarnición",
+//       "Costillita de cerdo grillé con guarnición",
+//       "Bondiola de cerdo a la portuguesa con papas naturales o fritas"
+//     ]
+//   }
